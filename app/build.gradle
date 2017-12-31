@@ -1,0 +1,54 @@
+apply plugin: 'com.android.application'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion extCompileSdkVersion
+    defaultConfig {
+        applicationId "net.angrycode.capture"
+        minSdkVersion extMinSdkVersion
+        targetSdkVersion extTargetSdkVersion
+        versionCode extVersionCode
+        versionName extVersionName
+    }
+    signingConfigs {
+        config {
+            storeFile file(KEY_STORE)
+            keyAlias KEY_ALIATS
+            keyPassword KEY_PASSWORD
+            storePassword KEY_PASSWORD
+        }
+//        debug {
+//            storeFile file(KEY_STORE)
+//            keyAlias KEY_ALIATS
+//            keyPassword KEY_PASSWORD
+//            storePassword KEY_PASSWORD
+//        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix '.debug'
+//            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.anko:anko-commons:$anko_version"
+    implementation extAndroidAppCompatV7
+    implementation extConstraintLayout
+    implementation extAndroidAnnotations
+    implementation extAndroidDesign
+    implementation 'com.google.android.gms:play-services-analytics:11.8.0'
+    implementation 'com.nightlynexus.demomode:demomode:0.1.2'
+    implementation 'com.jakewharton.timber:timber:4.3.1'
+    implementation 'com.bugsnag:bugsnag-android:3.7.0'
+}
