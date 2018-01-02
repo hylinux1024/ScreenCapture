@@ -1,18 +1,31 @@
 package net.angrycode.capture
 
+import android.Manifest
+import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.AdapterView
 import kotlinx.android.synthetic.main.activity_main.*
 import net.angrycode.capture.ext.*
+import org.jetbrains.anko.doFromSdk
+import org.jetbrains.anko.doIfSdk
+import pub.devrel.easypermissions.AfterPermissionGranted
+import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
+import android.widget.Toast
+
 
 /**
  * This Project is Fork from https://github.com/JakeWharton/Telecine,
@@ -27,12 +40,14 @@ class MainActivity : AppCompatActivity() {
 
     private val primaryNormal by lazy { ContextCompat.getColor(applicationContext, R.color.primary_normal) }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        getApp().stacks.push(this)
-
-        setTaskDescription(ActivityManager.TaskDescription(appName, rasterizeTaskIcon(), primaryNormal))
+        CheatSheet.setup(launch)
+        doFromSdk(Build.VERSION_CODES.LOLLIPOP) {
+            setTaskDescription(ActivityManager.TaskDescription(appName, rasterizeTaskIcon(), primaryNormal))
+        }
         initView()
         setListener()
     }
@@ -85,43 +100,108 @@ class MainActivity : AppCompatActivity() {
         switch_use_demo_mode.setOnCheckedChangeListener { _, isChecked -> if (showDemoMode != isChecked) showDemoMode = isChecked }
 
         launch.setOnClickListener { _ ->
-            Timber.d("Attempting to acquire permission to screen capture.")
-            fireScreenCaptureIntent()
+            captureWithPermission()
+//            fireScreenCaptureIntent()
         }
 
     }
 
-    private fun rasterizeTaskIcon(): Bitmap {
-        val drawable = resources.getDrawable(R.drawable.ic_videocam_white_24dp, theme)
-
-        val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val size = am.launcherLargeIconSize
-        val icon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-
-        val canvas = Canvas(icon)
-        drawable.setBounds(0, 0, size, size)
-        drawable.draw(canvas)
-
-        return icon
-    }
-
+    @TargetApi(Build.VERSION_CODES.M)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_CODE_OVERLAY_PERMISSIONS) {
+            if (!Settings.canDrawOverlays(this)) {
+                promptShowOverlayDialog()
+            } else {
+                fireScreenCaptureIntent()
+            }
+            return
+        }
         if (!handleActivityResult(requestCode, resultCode, data) &&
                 !DemoModeHelper.handleActivityResult(this, requestCode, showDemoModeSetting)) {
             super.onActivityResult(requestCode, resultCode, data)
         }
     }
 
+    private fun rasterizeTaskIcon(): Bitmap {
+        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_videocam_white_24dp)
+
+        val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val size = am.launcherLargeIconSize
+        val icon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+
+        val canvas = Canvas(icon)
+        drawable?.setBounds(0, 0, size, size)
+        drawable?.draw(canvas)
+
+        return icon
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @AfterPermissionGranted(REQUEST_CODE_PERMISSIONS)
+    private fun captureWithPermission() {
+//        val perms = Manifest.permission.SYSTEM_ALERT_WINDOW
+//        if (!EasyPermissions.hasPermissions(this, perms)) {
+//            Timber.d("Attempting to acquire permission.")
+//            EasyPermissions.requestPermissions(this, getString(R.string.rationale_ask), REQUEST_CODE_PERMISSIONS, perms)
+//        } else {
+//            Timber.d("Attempting to acquire permission to screen capture.")
+//            fireScreenCaptureIntent()
+//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Settings.canDrawOverlays(this)) {
+                Timber.d("Attempting to acquire permission to screen capture.")
+                fireScreenCaptureIntent()
+            } else {
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("Need permission to show overlay.")
+                        .setNegativeButton(R.string.cancel, null)
+                        .setPositiveButton(R.string.acquire_permission, { _, _ ->
+                            requestOverlayPermission()
+                        })
+                builder.show()
+
+            }
+        } else {
+            fireScreenCaptureIntent()
+        }
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun requestOverlayPermission() {
+        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:$packageName"))
+        startActivityForResult(intent, REQUEST_CODE_OVERLAY_PERMISSIONS)
+    }
+
+    private fun promptShowOverlayDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(R.string.rationale_ask_again)
+        builder.setNegativeButton(R.string.cancel, null)
+        builder.setPositiveButton(R.string.acquire_permission, { _, _ ->
+            requestOverlayPermission()
+        })
+        builder.show()
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onStop() {
         super.onStop()
         if (hideFromRecents && !isChangingConfigurations) {
             Timber.d("Removing task because hide from recents preference was enabled.")
-            finishAndRemoveTask()
+            doFromSdk(Build.VERSION_CODES.LOLLIPOP) {
+                finishAndRemoveTask()
+            }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        getApp().stacks.remove(this)
+    companion object {
+        const val REQUEST_CODE_PERMISSIONS = 100
+        const val REQUEST_CODE_OVERLAY_PERMISSIONS = 101
     }
 }

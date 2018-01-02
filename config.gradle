@@ -5,7 +5,7 @@ ext {
     extVersionCode = 1
     extVersionName = '1.0'
 
-    extCompileSdkVersion = 26
+    extCompileSdkVersion = 27
     extBuildToolsVersion = '27.0.2'
 
     extMinSdkVersion = 21
@@ -18,6 +18,8 @@ ext {
     extAndroidAnnotations = 'com.android.support:support-annotations:27.0.2'
     extAndroidMultiDex = 'com.android.support:multidex:1.0.1'
     extConstraintLayout = 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    externalEasyPermissions = 'pub.devrel:easypermissions:1.1.1'
 
 
 }

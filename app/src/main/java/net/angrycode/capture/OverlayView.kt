@@ -43,13 +43,13 @@ class OverlayView(context: Context, private var listener: Listener, private var 
         record_overlay_start.setOnClickListener { onStartClicked() }
     }
 
-    override fun onApplyWindowInsets(insets: WindowInsets?): WindowInsets {
+    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
         val lp = layoutParams
-        lp.height = if (insets?.systemWindowInsetTop != null) insets.systemWindowInsetTop else 0
+        lp.height = insets.systemWindowInsetTop
 
         listener.onResize()
 
-        return if (insets?.consumeSystemWindowInsets() != null) insets.consumeSystemWindowInsets() else super.onApplyWindowInsets(insets)
+        return insets.consumeSystemWindowInsets()
     }
 
     override fun onAttachedToWindow() {
@@ -136,11 +136,6 @@ class OverlayView(context: Context, private var listener: Listener, private var 
                     or FLAG_LAYOUT_NO_LIMITS
                     or FLAG_LAYOUT_INSET_DECOR
                     or FLAG_LAYOUT_IN_SCREEN, TRANSLUCENT)
-            if (Build.VERSION.SDK_INT >= 22) {
-                params.type = TYPE_TOAST
-            } else if (Build.VERSION.SDK_INT >= 26) {
-                params.type = TYPE_APPLICATION_OVERLAY
-            }
             params.gravity = Gravity.TOP or gravityEndLocaleHack()
 
             return params

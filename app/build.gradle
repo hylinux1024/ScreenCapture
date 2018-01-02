@@ -6,6 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion extCompileSdkVersion
+    buildToolsVersion extBuildToolsVersion
     defaultConfig {
         applicationId "net.angrycode.capture"
         minSdkVersion extMinSdkVersion
@@ -47,6 +48,7 @@ dependencies {
     implementation extConstraintLayout
     implementation extAndroidAnnotations
     implementation extAndroidDesign
+    implementation externalEasyPermissions
     implementation 'com.google.android.gms:play-services-analytics:11.8.0'
     implementation 'com.nightlynexus.demomode:demomode:0.1.2'
     implementation 'com.jakewharton.timber:timber:4.3.1'

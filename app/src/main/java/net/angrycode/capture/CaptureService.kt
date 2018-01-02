@@ -8,9 +8,6 @@ import android.content.Intent
 import android.os.IBinder
 import android.provider.Settings
 import android.support.v4.content.ContextCompat
-import android.view.WindowManager
-import android.view.WindowManager.LayoutParams.TYPE_TOAST
-import android.widget.TextView
 import com.nightlynexus.demomode.*
 import net.angrycode.capture.ext.*
 import timber.log.Timber
