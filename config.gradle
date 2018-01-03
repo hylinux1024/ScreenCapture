@@ -1,6 +1,6 @@
 ext {
     kotlin_version = '1.1.51'
-    anko_version='0.10.4'
+    anko_version = '0.10.4'
 
     extVersionCode = 1
     extVersionName = '1.0'
@@ -11,13 +11,14 @@ ext {
     extMinSdkVersion = 21
     extTargetSdkVersion = 27
 
-    extAndroidAppCompatV7 = 'com.android.support:appcompat-v7:27.0.2'
-    extAndroidCardView = 'com.android.support:cardview-v7:27.0.2'
-    extAndroidRecyclerView = 'com.android.support:recyclerview-v7:27.0.2'
-    extAndroidDesign = 'com.android.support:design:27.0.2'
-    extAndroidAnnotations = 'com.android.support:support-annotations:27.0.2'
-    extAndroidMultiDex = 'com.android.support:multidex:1.0.1'
-    extConstraintLayout = 'com.android.support.constraint:constraint-layout:1.0.2'
+    extAndroidAppCompatV7 = "com.android.support:appcompat-v7:$extBuildToolsVersion"
+    extAndroidCardView = "com.android.support:cardview-v7:$extBuildToolsVersion"
+    extAndroidRecyclerView = "com.android.support:recyclerview-v7:$extBuildToolsVersion"
+    extAndroidDesign = "com.android.support:design:$extBuildToolsVersion"
+    extAndroidAnnotations = "com.android.support:support-annotations:$extBuildToolsVersion"
+    extAndroidAnnotations = "com.android.support:cardview-v7:$extBuildToolsVersion"
+    extAndroidMultiDex = "com.android.support:multidex:1.0.1"
+    extConstraintLayout = "com.android.support.constraint:constraint-layout:1.0.2"
 
     externalEasyPermissions = 'pub.devrel:easypermissions:1.1.1'
 

@@ -30,6 +30,7 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="acquire_permission">Acquire</string>
+    <string name="empty_text">No more data.</string>
 
     <array name="countdown">
         <item>@string/countdown_three</item>

@@ -26,7 +26,9 @@
         android:label="@string/launcher_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Telecine">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,6 +59,9 @@
             android:exported="true"
             android:taskAffinity=""
             android:theme="@style/Theme.Telecine.Transparent" />
+        <activity
+            android:name=".local.ui.CaptureListActivity"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".CaptureTileService"
