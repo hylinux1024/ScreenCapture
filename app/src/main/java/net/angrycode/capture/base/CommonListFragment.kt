@@ -60,31 +60,31 @@ abstract class CommonListFragment<T, V : BaseViewHolder> : BaseFragment() {
     /**
      * list item divider color.
      */
-    protected fun getDividerDrawableRes(): Int {
+    open protected fun getDividerDrawableRes(): Int {
         return R.drawable.common_divider
     }
 
-    protected fun isSupportRefresh(): Boolean {
+    open protected fun isSupportRefresh(): Boolean {
         return false
     }
 
-    protected fun isSupportLoadMore(): Boolean {
+    open protected fun isSupportLoadMore(): Boolean {
         return false
     }
 
-    protected fun doOnRefresh() {
+    open protected fun doOnRefresh() {
 
     }
 
-    protected fun doOnLoadMore() {
+    open protected fun doOnLoadMore() {
 
     }
 
-    protected fun doOnItemClick(view: View, position: Int) {
+    open protected fun doOnItemClick(view: View, position: Int) {
 
     }
 
-    protected fun getEmptyText(): String {
+    open protected fun getEmptyText(): String {
         return resources.getString(R.string.empty_text)
     }
 

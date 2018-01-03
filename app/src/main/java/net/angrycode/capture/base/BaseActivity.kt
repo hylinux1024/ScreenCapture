@@ -10,7 +10,7 @@ import net.angrycode.capture.R
  */
 abstract class BaseActivity : AppCompatActivity() {
 
-    var toolbar: Toolbar? = null
+    protected var toolbar: Toolbar? = null
 
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
@@ -28,7 +28,7 @@ abstract class BaseActivity : AppCompatActivity() {
     /**
      * return true to show back btn,else hide it.
      */
-    protected fun isShowHomeAsUpIndicator(): Boolean {
+    open protected fun isShowHomeAsUpIndicator(): Boolean {
         return false
     }
 }

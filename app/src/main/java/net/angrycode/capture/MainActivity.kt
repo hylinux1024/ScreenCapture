@@ -17,7 +17,9 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.AdapterView
 import kotlinx.android.synthetic.main.activity_main.*
+import net.angrycode.capture.base.BaseActivity
 import net.angrycode.capture.ext.*
+import net.angrycode.capture.local.ui.CaptureListActivity
 import org.jetbrains.anko.doFromSdk
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -28,7 +30,7 @@ import timber.log.Timber
  * This Project is Fork from https://github.com/JakeWharton/Telecine,
  * and rewrite it by Kotlin.
  */
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private lateinit var videoSizePercentageAdapter: VideoSizePercentageAdapter
     private lateinit var showDemoModeSetting: DemoModeHelper.ShowDemoModeSetting
@@ -99,6 +101,10 @@ class MainActivity : AppCompatActivity() {
         launch.setOnClickListener { _ ->
             captureWithPermission()
 //            fireScreenCaptureIntent()
+        }
+
+        videoListBtn.setOnClickListener {
+            CaptureListActivity.start(this)
         }
 
     }

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import pub.devrel.easypermissions.EasyPermissions
 
 /**
  * Base Fragment.
@@ -22,4 +23,10 @@ abstract class BaseFragment : Fragment() {
     }
 
     abstract fun getLayoutResource(): Int
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
 }

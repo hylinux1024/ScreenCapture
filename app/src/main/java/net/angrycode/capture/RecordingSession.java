@@ -115,8 +115,7 @@ final class RecordingSession {
         this.showCountDown = showCountDown;
         this.videoSizePercentage = videoSizePercentage;
 
-        File picturesDir = Environment.getExternalStoragePublicDirectory(DIRECTORY_MOVIES);
-        outputRoot = new File(picturesDir, "ScreenCapture");
+        outputRoot = CaptureHelperKt.getRootDir();
 
         notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);

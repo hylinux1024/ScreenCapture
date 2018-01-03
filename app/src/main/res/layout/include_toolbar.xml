@@ -9,6 +9,6 @@
     android:minHeight="?attr/actionBarSize"
     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-    tools:title="Text">
+    tools:title="@string/app_name">
 
 </android.support.v7.widget.Toolbar>
