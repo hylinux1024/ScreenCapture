@@ -1,10 +1,8 @@
 package net.angrycode.capture
 
-import android.Manifest
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Context
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -20,11 +18,9 @@ import android.widget.AdapterView
 import kotlinx.android.synthetic.main.activity_main.*
 import net.angrycode.capture.ext.*
 import org.jetbrains.anko.doFromSdk
-import org.jetbrains.anko.doIfSdk
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
-import android.widget.Toast
 
 
 /**
