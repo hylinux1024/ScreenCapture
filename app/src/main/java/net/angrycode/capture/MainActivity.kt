@@ -108,18 +108,38 @@ class MainActivity : AppCompatActivity() {
 
     @TargetApi(Build.VERSION_CODES.M)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_CODE_OVERLAY_PERMISSIONS) {
-            if (!Settings.canDrawOverlays(this)) {
-                promptShowOverlayDialog()
-            } else {
-                fireScreenCaptureIntent()
+        when (requestCode) {
+            REQUEST_CODE_OVERLAY_PERMISSIONS -> {
+                if (!Settings.canDrawOverlays(this)) {
+                    promptShowDialog(getString(R.string.rationale_ask_again), { requestOverlayPermission() })
+                } else {
+                    if (Settings.System.canWrite(this)) {
+                        fireScreenCaptureIntent()
+                    } else {
+                        promptShowDialog(getString(R.string.rationale_ask), { requestWriteSettingsPermission() })
+                    }
+                }
             }
-            return
+            REQUEST_CODE_WRITE_SETTINGS_PERMISSIONS -> {
+                if (!Settings.System.canWrite(this)) {
+                    promptShowDialog(getString(R.string.rationale_ask_again), { requestOverlayPermission() })
+                } else {
+                    if (Settings.canDrawOverlays(this)) {
+                        fireScreenCaptureIntent()
+                    } else {
+                        promptShowDialog(getString(R.string.rationale_ask), { requestWriteSettingsPermission() })
+                    }
+                }
+            }
+            else -> {
+                if (!handleActivityResult(requestCode, resultCode, data) &&
+                        !DemoModeHelper.handleActivityResult(this, requestCode, showDemoModeSetting)) {
+                    super.onActivityResult(requestCode, resultCode, data)
+                }
+            }
         }
-        if (!handleActivityResult(requestCode, resultCode, data) &&
-                !DemoModeHelper.handleActivityResult(this, requestCode, showDemoModeSetting)) {
-            super.onActivityResult(requestCode, resultCode, data)
-        }
+
+
     }
 
     private fun rasterizeTaskIcon(): Bitmap {
@@ -148,23 +168,21 @@ class MainActivity : AppCompatActivity() {
 //            fireScreenCaptureIntent()
 //        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (Settings.canDrawOverlays(this)) {
+            val canDraw = Settings.canDrawOverlays(this)
+            val canWrite = Settings.System.canWrite(this)
+            if (canDraw && canWrite) {
                 Timber.d("Attempting to acquire permission to screen capture.")
                 fireScreenCaptureIntent()
             } else {
-                val builder = AlertDialog.Builder(this)
-                builder.setMessage("Need permission to show overlay.")
-                        .setNegativeButton(R.string.cancel, null)
-                        .setPositiveButton(R.string.acquire_permission, { _, _ ->
-                            requestOverlayPermission()
-                        })
-                builder.show()
-
+                if (!canDraw) {
+                    promptShowDialog(getString(R.string.rationale_ask), { requestOverlayPermission() })
+                } else if (!canWrite) {
+                    promptShowDialog(getString(R.string.rationale_ask), { requestWriteSettingsPermission() })
+                }
             }
         } else {
             fireScreenCaptureIntent()
         }
-
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -173,15 +191,20 @@ class MainActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_OVERLAY_PERMISSIONS)
     }
 
-    private fun promptShowOverlayDialog() {
+    @TargetApi(Build.VERSION_CODES.M)
+    private fun requestWriteSettingsPermission() {
+        val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS, Uri.parse("package:$packageName"))
+        startActivityForResult(intent, REQUEST_CODE_WRITE_SETTINGS_PERMISSIONS)
+    }
+
+    private fun promptShowDialog(message: String, request: () -> Unit) {
         val builder = AlertDialog.Builder(this)
-        builder.setMessage(R.string.rationale_ask_again)
+        builder.setMessage(message)
         builder.setNegativeButton(R.string.cancel, null)
         builder.setPositiveButton(R.string.acquire_permission, { _, _ ->
-            requestOverlayPermission()
+            request()
         })
         builder.show()
-
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -203,5 +226,6 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val REQUEST_CODE_PERMISSIONS = 100
         const val REQUEST_CODE_OVERLAY_PERMISSIONS = 101
+        const val REQUEST_CODE_WRITE_SETTINGS_PERMISSIONS = 102
     }
 }
