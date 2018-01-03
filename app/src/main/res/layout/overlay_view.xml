@@ -5,7 +5,7 @@
     <LinearLayout
         android:id="@+id/record_overlay_buttons"
         android:layout_width="match_parent"
-        android:layout_height="22dp"
+        android:layout_height="match_parent"
         android:layout_gravity="end"
         android:orientation="horizontal">
 
@@ -31,7 +31,7 @@
     <TextView
         android:id="@+id/record_overlay_recording"
         android:layout_width="match_parent"
-        android:layout_height="22dp"
+        android:layout_height="match_parent"
         android:background="@color/accent_pressed"
         android:gravity="center"
         android:text="@string/record"
@@ -43,6 +43,6 @@
     <View
         android:id="@+id/record_overlay_stop"
         android:layout_width="match_parent"
-        android:layout_height="22dp"
+        android:layout_height="match_parent"
         android:visibility="invisible" />
 </merge>

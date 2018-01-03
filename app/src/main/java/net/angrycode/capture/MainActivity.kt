@@ -1,5 +1,6 @@
 package net.angrycode.capture
 
+import android.Manifest
 import android.annotation.TargetApi
 import android.app.ActivityManager
 import android.content.Context
@@ -155,28 +156,30 @@ class MainActivity : AppCompatActivity() {
     @TargetApi(Build.VERSION_CODES.M)
     @AfterPermissionGranted(REQUEST_CODE_PERMISSIONS)
     private fun captureWithPermission() {
-//        val perms = Manifest.permission.SYSTEM_ALERT_WINDOW
-//        if (!EasyPermissions.hasPermissions(this, perms)) {
-//            Timber.d("Attempting to acquire permission.")
-//            EasyPermissions.requestPermissions(this, getString(R.string.rationale_ask), REQUEST_CODE_PERMISSIONS, perms)
-//        } else {
-//            Timber.d("Attempting to acquire permission to screen capture.")
-//            fireScreenCaptureIntent()
-//        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val canDraw = Settings.canDrawOverlays(this)
-            val canWrite = Settings.System.canWrite(this)
-            if (canDraw && canWrite) {
-                Timber.d("Attempting to acquire permission to screen capture.")
-                fireScreenCaptureIntent()
+            val perms = Manifest.permission.READ_EXTERNAL_STORAGE
+            if (!EasyPermissions.hasPermissions(this, perms)) {
+                Timber.d("Attempting to acquire external storage permission.")
+                EasyPermissions.requestPermissions(this, getString(R.string.rationale_ask), REQUEST_CODE_PERMISSIONS, perms)
             } else {
-                if (!canDraw) {
-                    promptShowDialog(getString(R.string.rationale_ask), { requestOverlayPermission() })
-                } else if (!canWrite) {
-                    promptShowDialog(getString(R.string.rationale_ask), { requestWriteSettingsPermission() })
+                val canDraw = Settings.canDrawOverlays(this)
+                val canWrite = Settings.System.canWrite(this)
+                if (canDraw && canWrite) {
+                    Timber.d("Attempting to acquire permission to screen capture.")
+                    fireScreenCaptureIntent()
+                } else {
+                    if (!canDraw) {
+                        Timber.d("Attempting to acquire draw overlay permission.")
+                        promptShowDialog(getString(R.string.rationale_ask), { requestOverlayPermission() })
+                    } else if (!canWrite) {
+                        Timber.d("Attempting to acquire write settings permission.")
+                        promptShowDialog(getString(R.string.rationale_ask), { requestWriteSettingsPermission() })
+                    }
                 }
             }
         } else {
+            Timber.d("Attempting to acquire permission to screen capture.")
             fireScreenCaptureIntent()
         }
     }

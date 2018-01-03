@@ -149,7 +149,7 @@ final class RecordingSession {
 
             @Override
             public void onResize() {
-//                windowManager.updateViewLayout(overlayView, overlayView.getLayoutParams());
+                windowManager.updateViewLayout(overlayView, overlayView.getLayoutParams());
             }
         };
         overlayView = OverlayView.Companion.create(context, overlayListener, showCountDown);
