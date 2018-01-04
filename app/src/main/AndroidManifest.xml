@@ -61,6 +61,7 @@
             android:theme="@style/Theme.Telecine.Transparent" />
         <activity
             android:name=".local.ui.CaptureListActivity"
+            android:label="Capture List"
             android:screenOrientation="portrait" />
 
         <service

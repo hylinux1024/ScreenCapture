@@ -21,7 +21,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 supportActionBar?.setHomeButtonEnabled(true)
                 supportActionBar?.setDisplayHomeAsUpEnabled(true)
             }
-            toolbar?.setOnClickListener { onBackPressed() }
+            toolbar?.setNavigationOnClickListener { onBackPressed() }
         }
     }
 
