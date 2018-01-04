@@ -218,8 +218,8 @@ class MainActivity : BaseActivity() {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
         if (hideFromRecents && !isChangingConfigurations) {
             Timber.d("Removing task because hide from recents preference was enabled.")
             doFromSdk(Build.VERSION_CODES.LOLLIPOP) {
