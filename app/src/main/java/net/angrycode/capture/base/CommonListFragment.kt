@@ -29,13 +29,15 @@ abstract class CommonListFragment<T, V : BaseViewHolder> : BaseFragment() {
     private fun initView() {
         val layout = LinearLayoutManager(context)
         layout.orientation = LinearLayoutManager.VERTICAL
-        val itemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
         if (context != null) {
-            val drawable = ContextCompat.getDrawable(context!!, getDividerDrawableRes())
-            if (drawable != null) {
-                itemDecoration.setDrawable(drawable)
+            if (getDividerDrawableRes() > 0) {
+                val itemDecoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+                val drawable = ContextCompat.getDrawable(context!!, getDividerDrawableRes())
+                if (drawable != null) {
+                    itemDecoration.setDrawable(drawable)
+                }
+                recyclerView.addItemDecoration(itemDecoration)
             }
-            recyclerView.addItemDecoration(itemDecoration)
             recyclerView.layoutManager = layout
             recyclerView.adapter = adapter
             if (isSupportRefresh()) {
@@ -48,7 +50,6 @@ abstract class CommonListFragment<T, V : BaseViewHolder> : BaseFragment() {
             if (isSupportLoadMore()) {
                 adapter.setOnLoadMoreListener({ doOnLoadMore() }, recyclerView)
             }
-
             adapter.setOnItemClickListener({ _, view, position -> doOnItemClick(view, position) })
 
             val emptyView = layoutInflater.inflate(R.layout.simple_empty_view, null) as TextView

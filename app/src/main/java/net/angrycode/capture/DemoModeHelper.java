@@ -15,7 +15,7 @@ import static com.nightlynexus.demomode.DemoModeInitializer.DemoModeSetting.ENAB
 import static com.nightlynexus.demomode.DemoModeInitializer.GrantPermissionResult.FAILURE;
 import static com.nightlynexus.demomode.DemoModeInitializer.GrantPermissionResult.SUCCESS;
 
-final class DemoModeHelper {
+public final class DemoModeHelper {
     private static final int REQUEST_CODE_ENABLE_DEMO_MODE = 5309;
 
     private DemoModeHelper() {
@@ -26,13 +26,13 @@ final class DemoModeHelper {
         AVAILABLE, UNAVAILABLE, NEEDS_ROOT_ACCESS, NEEDS_DEMO_MODE_SETTING
     }
 
-    interface ShowDemoModeSetting {
+    public interface ShowDemoModeSetting {
         void show();
 
         void hide();
     }
 
-    static void showDemoModeSetting(final Activity activity, final ShowDemoModeSetting callback) {
+    public static void showDemoModeSetting(final Activity activity, final ShowDemoModeSetting callback) {
         if (SDK_INT < M) {
             callback.hide();
             return;
@@ -88,7 +88,7 @@ final class DemoModeHelper {
     }
 
     @TargetApi(M)
-    static boolean handleActivityResult(Activity activity, int requestCode,
+    public static boolean handleActivityResult(Activity activity, int requestCode,
                                         ShowDemoModeSetting callback) {
         if (requestCode != REQUEST_CODE_ENABLE_DEMO_MODE) {
             return false;

@@ -3,6 +3,7 @@ package net.angrycode.capture.base
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import net.angrycode.capture.R
+import pub.devrel.easypermissions.EasyPermissions
 
 /**
  * Base Activity.
@@ -30,5 +31,10 @@ abstract class BaseActivity : AppCompatActivity() {
      */
     open protected fun isShowHomeAsUpIndicator(): Boolean {
         return false
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 }

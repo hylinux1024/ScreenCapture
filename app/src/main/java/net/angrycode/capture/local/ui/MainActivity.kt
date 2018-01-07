@@ -1,4 +1,4 @@
-package net.angrycode.capture
+package net.angrycode.capture.local.ui
 
 import android.Manifest
 import android.annotation.TargetApi
@@ -12,101 +12,69 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.GravityCompat
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.view.View
-import android.widget.AdapterView
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
+import net.angrycode.capture.BuildConfig
+import net.angrycode.capture.R
 import net.angrycode.capture.base.BaseActivity
-import net.angrycode.capture.ext.*
-import net.angrycode.capture.local.ui.CaptureListActivity
+import net.angrycode.capture.ext.hideFromRecents
+import net.angrycode.capture.fireScreenCaptureIntent
+import net.angrycode.capture.handleActivityResult
 import org.jetbrains.anko.doFromSdk
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import timber.log.Timber
 
-
 /**
- * This Project is Fork from https://github.com/JakeWharton/Telecine,
- * and rewrite it by Kotlin.
+ * Created by pc on 2018/1/3.
  */
 class MainActivity : BaseActivity() {
-
-    private lateinit var videoSizePercentageAdapter: VideoSizePercentageAdapter
-    private lateinit var showDemoModeSetting: DemoModeHelper.ShowDemoModeSetting
+//    private lateinit var showDemoModeSetting: DemoModeHelper.ShowDemoModeSetting
 
     private val appName by lazy { resources.getString(R.string.app_name) }
 
     private val primaryNormal by lazy { ContextCompat.getColor(applicationContext, R.color.primary_normal) }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        CheatSheet.setup(launch)
+        init()
+        supportFragmentManager.beginTransaction().replace(R.id.container, CaptureListFragment()).commitAllowingStateLoss()
+
+    }
+
+    private fun init() {
+        val toggle = ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
         doFromSdk(Build.VERSION_CODES.LOLLIPOP) {
             setTaskDescription(ActivityManager.TaskDescription(appName, rasterizeTaskIcon(), primaryNormal))
         }
-        initView()
-        setListener()
+        val tvVersion = navigation.getHeaderView(0).findViewById<TextView>(R.id.tvVersion)
+        val version = "V${BuildConfig.VERSION_NAME}"
+        tvVersion.text = version
+
+//        showDemoModeSetting = object : DemoModeHelper.ShowDemoModeSetting {
+//            override fun show() {
+//            }
+//
+//            override fun hide() {
+//            }
+//        }
+//        DemoModeHelper.showDemoModeSetting(this, showDemoModeSetting)
     }
 
-    private fun initView() {
-        videoSizePercentageAdapter = VideoSizePercentageAdapter(this)
-        spinner_video_size_percentage.adapter = videoSizePercentageAdapter
-        spinner_video_size_percentage.setSelection(VideoSizePercentageAdapter.getSelectedPosition(videoSize))
-
-        switch_show_countdown.isChecked = showCountDown
-        switch_hide_from_recents.isChecked = hideFromRecents
-        switch_recording_notification.isChecked = showRecordingNotification
-        switch_show_touches.isChecked = showTouches
-        switch_use_demo_mode.isChecked = showDemoMode
-
-        showDemoModeSetting = object : DemoModeHelper.ShowDemoModeSetting {
-            override fun show() {
-                switch_use_demo_mode.visibility = (View.VISIBLE)
-            }
-
-            override fun hide() {
-                switch_use_demo_mode.isChecked = (false)
-                container_use_demo_mode.visibility = (View.GONE)
-            }
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
         }
-        DemoModeHelper.showDemoModeSetting(this, showDemoModeSetting)
-    }
-
-    private fun setListener() {
-        spinner_video_size_percentage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val newValue = videoSizePercentageAdapter.getItem(position) as Int
-                val oldValue = videoSize
-                if (newValue != oldValue) {
-                    videoSize = newValue
-                }
-            }
-        }
-        switch_show_countdown.setOnCheckedChangeListener { _, isChecked ->
-            if (showCountDown != isChecked) showCountDown = isChecked
-        }
-        switch_hide_from_recents.setOnCheckedChangeListener { _, isChecked -> if (hideFromRecents != isChecked) hideFromRecents = isChecked }
-        switch_recording_notification.setOnCheckedChangeListener { _, isChecked -> if (showRecordingNotification != isChecked) showRecordingNotification = isChecked }
-        switch_show_touches.setOnCheckedChangeListener { _, isChecked -> if (showTouches != isChecked) showTouches = isChecked }
-        switch_use_demo_mode.setOnCheckedChangeListener { _, isChecked -> if (showDemoMode != isChecked) showDemoMode = isChecked }
-
-        launch.setOnClickListener { _ ->
-            captureWithPermission()
-//            fireScreenCaptureIntent()
-        }
-
-        videoListBtn.setOnClickListener {
-            CaptureListActivity.start(this)
-        }
-
     }
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -135,8 +103,8 @@ class MainActivity : BaseActivity() {
                 }
             }
             else -> {
-                if (!handleActivityResult(requestCode, resultCode, data) &&
-                        !DemoModeHelper.handleActivityResult(this, requestCode, showDemoModeSetting)) {
+                if (!handleActivityResult(requestCode, resultCode, data) /*&&
+                        !DemoModeHelper.handleActivityResult(this, requestCode, showDemoModeSetting)*/) {
                     super.onActivityResult(requestCode, resultCode, data)
                 }
             }
@@ -145,23 +113,9 @@ class MainActivity : BaseActivity() {
 
     }
 
-    private fun rasterizeTaskIcon(): Bitmap {
-        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_videocam_white_24dp)
-
-        val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val size = am.launcherLargeIconSize
-        val icon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-
-        val canvas = Canvas(icon)
-        drawable?.setBounds(0, 0, size, size)
-        drawable?.draw(canvas)
-
-        return icon
-    }
-
     @TargetApi(Build.VERSION_CODES.M)
     @AfterPermissionGranted(REQUEST_CODE_PERMISSIONS)
-    private fun captureWithPermission() {
+    fun captureWithPermission() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val perms = Manifest.permission.READ_EXTERNAL_STORAGE
@@ -212,10 +166,6 @@ class MainActivity : BaseActivity() {
         builder.show()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onDestroy() {
@@ -233,4 +183,19 @@ class MainActivity : BaseActivity() {
         const val REQUEST_CODE_OVERLAY_PERMISSIONS = 101
         const val REQUEST_CODE_WRITE_SETTINGS_PERMISSIONS = 102
     }
+
+    private fun rasterizeTaskIcon(): Bitmap {
+        val drawable = ContextCompat.getDrawable(this, R.drawable.ic_videocam_white_24dp)
+
+        val am = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val size = am.launcherLargeIconSize
+        val icon = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+
+        val canvas = Canvas(icon)
+        drawable?.setBounds(0, 0, size, size)
+        drawable?.draw(canvas)
+
+        return icon
+    }
+
 }

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Context.MEDIA_PROJECTION_SERVICE
 import android.content.Intent
 import android.media.projection.MediaProjectionManager
+import android.net.Uri
 import android.os.Environment
 import android.os.Environment.DIRECTORY_MOVIES
 import android.provider.MediaStore
@@ -64,4 +65,14 @@ fun Context.listLocalVideos(): List<Video> {
     }
     cursor?.close()
     return localList
+}
+
+fun Context.deleteExternalFile(path: String?): Boolean {
+    val file = File(path)
+    val del = file.delete()
+    val media = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+    val contentUri = Uri.fromFile(file)
+    media.data = contentUri
+    sendBroadcast(media)
+    return del
 }
