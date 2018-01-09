@@ -67,6 +67,25 @@
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE_PREFERENCES" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="http"
+                    android:host="wecode.xyz"
+                    android:pathPrefix="/home" />
+                <data
+                    android:scheme="https"
+                    android:host="wecode.xyz"
+                    android:pathPrefix="/home" />
+                <data
+                    android:scheme="wecode"
+                    android:host="capture"
+                    android:pathPrefix="/home" />
+            </intent-filter>
         </activity>
 
         <service

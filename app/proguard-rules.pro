@@ -22,3 +22,11 @@
 
 -dontwarn com.tencent.bugly.**
 -keep public class com.tencent.bugly.**{*;}
+
+-keep class .R
+-keep class **.R$* {
+    <fields>;
+}
+-keepclasseswithmembers class **.R$* {
+    public static final int define_*;
+}
