@@ -1,4 +1,4 @@
-package net.angrycode.capture
+package net.angrycode.capture.setting.ui
 
 import android.annotation.TargetApi
 import android.content.Intent
@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import kotlinx.android.synthetic.main.activity_settings.*
+import net.angrycode.capture.*
 import net.angrycode.capture.base.BaseActivity
 import net.angrycode.capture.ext.*
 
@@ -93,6 +94,10 @@ class SettingsActivity : BaseActivity() {
                 !DemoModeHelper.handleActivityResult(this, requestCode, showDemoModeSetting)) {
             super.onActivityResult(requestCode, resultCode, data)
         }
+    }
+
+    override fun isShowHomeAsUpIndicator(): Boolean {
+        return true
     }
 
 }

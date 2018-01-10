@@ -21,8 +21,10 @@ import net.angrycode.capture.BuildConfig
 import net.angrycode.capture.R
 import net.angrycode.capture.base.BaseActivity
 import net.angrycode.capture.ext.hideFromRecents
+import net.angrycode.capture.ext.start
 import net.angrycode.capture.fireScreenCaptureIntent
 import net.angrycode.capture.handleActivityResult
+import net.angrycode.capture.setting.ui.SettingsActivity
 import org.jetbrains.anko.doFromSdk
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -58,7 +60,18 @@ class MainActivity : BaseActivity() {
         val tvVersion = navigation.getHeaderView(0).findViewById<TextView>(R.id.tvVersion)
         val version = "V${BuildConfig.VERSION_NAME}"
         tvVersion.text = version
-
+        navigation.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_manage -> {
+                    start(SettingsActivity::class.java)
+                }
+                R.id.nav_about -> {
+                }
+                else -> {
+                }
+            }
+            true
+        }
 //        showDemoModeSetting = object : DemoModeHelper.ShowDemoModeSetting {
 //            override fun show() {
 //            }
@@ -67,6 +80,13 @@ class MainActivity : BaseActivity() {
 //            }
 //        }
 //        DemoModeHelper.showDemoModeSetting(this, showDemoModeSetting)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        }
     }
 
     override fun onBackPressed() {

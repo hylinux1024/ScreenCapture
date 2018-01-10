@@ -1,6 +1,8 @@
 package net.angrycode.capture.ext
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.support.annotation.DimenRes
 import android.support.v4.app.Fragment
 import android.util.TypedValue
@@ -44,4 +46,12 @@ val Context.inputMethodManager: InputMethodManager?
  */
 fun Context.hideSoftInput(view: View) {
     inputMethodManager?.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+fun Context.start(clazz: Class<*>) {
+    val intent = Intent(this, clazz)
+    if (this !is Activity) {
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+    startActivity(intent)
 }

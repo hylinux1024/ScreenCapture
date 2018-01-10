@@ -31,7 +31,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Telecine">
         <activity
-            android:name=".SettingsActivity"
+            android:name=".setting.ui.SettingsActivity"
+            android:label="@string/setting"
             android:screenOrientation="portrait">
 
         </activity>

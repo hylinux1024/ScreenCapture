@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SettingsActivity">
+    tools:context=".setting.ui.SettingsActivity">
 
     <include layout="@layout/include_toolbar" />
 
@@ -145,15 +145,7 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <android.support.v7.widget.AppCompatButton
-                android:id="@+id/videoListBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Capture Videos"
-                android:textColor="@color/primary_text"
-                android:textSize="16sp" />
         </LinearLayout>
-
 
     </ScrollView>
 

@@ -32,7 +32,7 @@ import android.widget.Toast;
  * <a href="https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/core/java/com/android/internal/view/menu/ActionMenuItemView.java">
  * ActionMenuItemView.java</a>.
  */
-final class CheatSheet {
+public final class CheatSheet {
   /**
    * The estimated height of a toast, in dips (density-independent pixels). This is used to
    * determine whether or not the toast should appear above or below the UI element.
